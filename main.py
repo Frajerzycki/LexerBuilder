@@ -1,0 +1,21 @@
+from LexerBuilder import LexerBuilder
+from SimpleToken import SimpleToken
+lb = LexerBuilder("let a=11.1 2<<0x1+\"abc\\\"\";\n")
+lb.set_on_string_literal(SimpleToken("STRING_LITERAL"))
+lb.set_on_integer_literal(SimpleToken("INTEGER_LITERAL"))
+lb.set_on_double_literal(SimpleToken("DOUBLE_LITERAL"))
+lb.set_on_identifier(SimpleToken("IDENTIFIER"))
+lb.set_on_comma(SimpleToken("COMMA"))
+lb.set_on_semicolon(SimpleToken("SEMICOLON"))
+lb.set_on_binary_operator(SimpleToken("BINARY_OPERATOR"))
+lb.set_on_comparsion_operator(SimpleToken("COMPARSION_OPERATOR"))
+lb.set_on_assigment_operator(SimpleToken("ASSIGMENT_OPERATOR"))
+lb.set_on_logical_opeator(SimpleToken("LOGICAL_OPERATOR"))
+lb.set_on_colon(SimpleToken("COLON"))
+lb.set_on_bracket(SimpleToken("BRACKET"))
+lb.set_on_curly_bracket(SimpleToken("CURLY_BRACKET"))
+lb.set_on_square_bracket(SimpleToken("SQUARE_BRACKET"))
+lb.set_keyword("let",SimpleToken("LET"))
+lb.set_comment_char('#','\n')
+for item in lb.get_all_tokens():
+    print(item.get_type()+": " + item.get_text())

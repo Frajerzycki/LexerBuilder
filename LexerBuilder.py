@@ -136,7 +136,7 @@ class LexerBuilder():
 
     def set_text(self, text):
         self.__text = text + " "
-    
+
     def set_keyword(self, keyword, token):
         self.__keywords[keyword] = token
 
@@ -348,3 +348,7 @@ class LexerBuilder():
             return self.__TOKENS[self.__token_counter]
         return None
 
+    def has_next_token(self):
+        if self.__token_counter+1 == self.__TOKENS.__len__():
+            return False
+        return True

@@ -3,9 +3,9 @@ class SimpleToken():
     text = ""
     type = ""
     def get_type(self):
-        return self.token
-    def __init__(self,token):
-        self.token = token
+        return self.type
+    def __init__(self,type):
+        self.type = type
     def set_text(self,text):
         self.text = text
     def get_text(self):

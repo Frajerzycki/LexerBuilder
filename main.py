@@ -1,6 +1,6 @@
 from LexerBuilder import LexerBuilder
 from SimpleToken import SimpleToken
-lb = LexerBuilder("let a=11.1 2<<0x1+\"abc\\\"\";\n")
+lb = LexerBuilder(input("Enter the string to tokenize:\t"))
 lb.set_on_string_literal(SimpleToken("STRING_LITERAL"))
 lb.set_on_integer_literal(SimpleToken("INTEGER_LITERAL"))
 lb.set_on_double_literal(SimpleToken("DOUBLE_LITERAL"))

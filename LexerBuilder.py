@@ -17,9 +17,9 @@ class LexerBuilder():
 
     __REGEX_IDENTIFIER = re.compile("^[a-zA-Z_$][a-zA-Z_$0-9]*$")
 
-    __INTEGER_LITERAL_IDENTIFIER = re.compile("(0|[1-9][0-9]*|0[oO]?[0-7]+|0[xX][0-9a-fA-F]+|0[bB][01]+)[lL]?")
+    __REGEX_INTEGER_LITERAL = re.compile("(0|[1-9][0-9]*|0[oO]?[0-7]+|0[xX][0-9a-fA-F]+|0[bB][01]+)[lL]?")
 
-    __DOUBLE_LITERAL_IDENTIFIER = re.compile("[0-9]*\.[0-9]*")
+    __REGEX_DOUBLE_LITERAL= re.compile("[0-9]*\.[0-9]*")
 
     __BINARY_OPERATORS = ['*', '/', '+',
                           '-', '%', '<', '>', '&', '|', '^', '~']
@@ -181,7 +181,7 @@ class LexerBuilder():
             self.__TOKENS.append(self.__copied)
 
     def __is_integer_literal(self, string):
-        return self.__INTEGER_LITERAL_IDENTIFIER.match(string)
+        return self.__REGEX_INTEGER_LITERAL.match(string)
 
     def __is_double_literal(self, string):
         return self.__DOUBLE_LITERAL_IDENTIFIER.match(string)

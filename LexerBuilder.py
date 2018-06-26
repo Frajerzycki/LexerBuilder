@@ -17,14 +17,15 @@ class LexerBuilder():
 
     __REGEX_IDENTIFIER = re.compile("^[a-zA-Z_$][a-zA-Z_$0-9]*$")
 
-    __REGEX_INTEGER_LITERAL = re.compile("(0|[1-9][0-9]*|0[oO]?[0-7]+|0[xX][0-9a-fA-F]+|0[bB][01]+)[lL]?")
+    __REGEX_INTEGER_LITERAL = re.compile(
+        "[+-]?[0-9]+")
 
-    __REGEX_DOUBLE_LITERAL= re.compile("[0-9]*\.[0-9]*")
+    __REGEX_FLOAT_LITERAL = re.compile(r"[+-]?[0-9]*\.[0-9]*")
 
     __BINARY_OPERATORS = ['*', '/', '+',
                           '-', '%', '<', '>', '&', '|', '^', '~']
 
-    __COMPARSION_OPERATORS = ['=', '!', '<', '>']
+    __COMPARISON_OPERATORS = ['=', '!', '<', '>']
 
     __LOGICAL_OPERATORS = ['&', '|', '!']
 
@@ -36,7 +37,7 @@ class LexerBuilder():
 
     __token_identifier = None
 
-    __token_double = None
+    __token_float = None
 
     __token_integer = None
 
@@ -44,9 +45,9 @@ class LexerBuilder():
 
     __token_binary_operator = None
 
-    __token_assigment_operator = None
+    __token_assignment_operator = None
 
-    __token_comparsion_operator = None
+    __token_comparison_operator = None
 
     __token_logical_operator = None
 
@@ -81,8 +82,8 @@ class LexerBuilder():
     def set_on_identifier(self, token_identifier):
         self.__token_identifier = token_identifier
 
-    def set_on_double_literal(self, token_double):
-        self.__token_double = token_double
+    def set_on_float_literal(self, token_float):
+        self.__token_float = token_float
 
     def set_on_integer_literal(self, token_integer):
         self.__token_integer = token_integer
@@ -93,11 +94,11 @@ class LexerBuilder():
     def set_on_binary_operator(self, token_binary_operator):
         self.__token_binary_operator = token_binary_operator
 
-    def set_on_assigment_operator(self, token_assigment_operator):
-        self.__token_assigment_operator = token_assigment_operator
+    def set_on_assignment_operator(self, token_assignment_operator):
+        self.__token_assignment_operator = token_assignment_operator
 
-    def set_on_comparsion_operator(self, token_comparsion_operator):
-        self.__token_comparsion_operator = token_comparsion_operator
+    def set_on_comparison_operator(self, token_comparison_operator):
+        self.__token_comparison_operator = token_comparison_operator
 
     def set_on_logical_operator(self, token_logical_operator):
         self.__token_logical_operator = token_logical_operator
@@ -163,19 +164,19 @@ class LexerBuilder():
             self.__copied = copy.copy(self.__keywords[keyword_to_string])
             self.__copied.set_text(keyword_to_string)
             self.__TOKENS.append(self.__copied)
-        elif self.__matched_value is not None:
+        elif self.__matched_value!= None:
             self.__copied = copy.copy(self.__matched_value)
             self.__copied.set_text(keyword_to_string)
             self.__TOKENS.append(self.__copied)
-        elif self.__token_double is not None and self.__is_double_literal(keyword_to_string):
-            self.__copied = copy.copy(self.__token_double)
+        elif self.__token_float!= None and self.__is_float_literal(keyword_to_string):
+            self.__copied = copy.copy(self.__token_float)
             self.__copied.set_text(keyword_to_string)
             self.__TOKENS.append(self.__copied)
-        elif self.__token_integer is not None and self.__is_integer_literal(keyword_to_string):
+        elif self.__token_integer!= None and self.__is_integer_literal(keyword_to_string):
             self.__copied = copy.copy(self.__token_integer)
             self.__copied.set_text(keyword_to_string)
             self.__TOKENS.append(self.__copied)
-        elif self.__token_identifier is not None and self.__is_identifier(keyword_to_string):
+        elif self.__token_identifier!= None and self.__is_identifier(keyword_to_string):
             self.__copied = copy.copy(self.__token_identifier)
             self.__copied.set_text(keyword_to_string)
             self.__TOKENS.append(self.__copied)
@@ -183,8 +184,8 @@ class LexerBuilder():
     def __is_integer_literal(self, string):
         return self.__REGEX_INTEGER_LITERAL.match(string)
 
-    def __is_double_literal(self, string):
-        return self.__DOUBLE_LITERAL_IDENTIFIER.match(string)
+    def __is_float_literal(self, string):
+        return self.__REGEX_FLOAT_LITERAL.match(string)
 
     def __is_identifier(self, string):
         return self.__REGEX_IDENTIFIER.match(string)
@@ -199,17 +200,17 @@ class LexerBuilder():
         while i < self.__text.__len__():
             this_char = self.__text[i]
             if is_in_comment:
-                if this_char is self.__end_comment_char:
+                if this_char==self.__end_comment_char:
                     is_in_comment = False
+                i += 1
                 continue
             if is_in_string:
-                print(this_char)
                 if write_next_escape_char:
                     self.__keyword += this_char
                     write_next_escape_char = False
-                elif this_char is '\\':
+                elif this_char=='\\':
                     write_next_escape_char = True
-                elif this_char is '\"':
+                elif this_char=='\"':
                     self.__copied = copy.copy(self.__token_string)
                     self.__copied.set_text(self.__keyword)
                     if self.__can_i_add_quotes:
@@ -223,110 +224,111 @@ class LexerBuilder():
                 i += 1
                 continue
             self.__keyword += this_char
-            if this_char != '\0' and this_char is self.__comment_char:
+            if this_char!= '\0' and this_char==self.__comment_char:
                 is_in_comment = True
-            elif self.__token_string is not None and this_char is '\"':
+            elif self.__token_string!= None and this_char=='\"':
                 is_in_string = True
                 self.__keyword = ""
             elif str(this_char).isspace():
                 self.__check()
                 self.__keyword = ""
-            elif self.__token_comma is not None and this_char is ',':
+            elif self.__token_comma!= None and this_char==',':
                 self.__check()
                 self.__TOKENS.append(self.__token_comma)
                 self.__keyword = ""
-            elif self.__token_dot is not None and this_char is '.':
+            elif self.__token_dot!= None and this_char=='.':
                 if i > 0:
-                    if str(self.__text[i - 1]).isdigit:
+                    if not str(self.__text[i - 1]).isdigit:
                         self.__check()
                         self.__TOKENS.append(self.__token_dot)
                         self.__keyword = ""
-            elif self.__token_semicolon is not None and this_char is ';':
+            elif self.__token_semicolon!= None and this_char==';':
                 self.__check()
                 self.__TOKENS.append(self.__token_semicolon)
                 self.__keyword = ""
-            elif self.__token_colon is not None and this_char is ':':
+            elif self.__token_colon!= None and this_char==':':
                 self.__check()
                 self.__TOKENS.append(self.__token_colon)
                 self.__keyword = ""
-            elif self.__token_bracket is not None and (this_char is '(' or this_char is ')'):
+            elif self.__token_bracket!= None and (this_char=='(' or this_char==')'):
                 self.__check()
                 self.__copied = copy.copy(self.__token_bracket)
                 self.__copied.set_text(str(this_char))
                 self.__TOKENS.append(self.__copied)
                 self.__keyword = ""
-            elif self.__token_curly_bracket is not None and (this_char is '{' or this_char is '}'):
+            elif self.__token_curly_bracket!= None and (this_char=='{' or this_char=='}'):
                 self.__check()
                 self.__copied = copy.copy(self.__token_curly_bracket)
                 self.__copied.set_text(str(this_char))
                 self.__TOKENS.append(self.__copied)
                 self.__keyword = ""
-            elif self.__token_square_bracket is not None and (this_char is '[' or this_char is ']'):
+            elif self.__token_square_bracket!= None and (this_char=='[' or this_char==']'):
                 self.__check()
                 self.__copied = copy.copy(self.__token_square_bracket)
                 self.__copied.set_text(str(this_char))
                 self.__TOKENS.append(self.__copied)
                 self.__keyword = ""
-            elif self.__token_comparsion_operator is not None and this_char in self.__COMPARSION_OPERATORS and (
+            elif self.__token_comparison_operator!= None and this_char in self.__COMPARISON_OPERATORS and (
                     (i <= self.__text.__len__() - 2) and (
-                    self.__text[i + 1] is '=' or (this_char is '<' or this_char is '>') and (
-                    self.__text[i + 1] != '<' and self.__text[i + 1] != '>'))):
+                    self.__text[i + 1]=='=' or (this_char=='<' or this_char=='>') and (
+                    self.__text[i + 1]!= '<' and self.__text[i + 1]!= '>'))):
                 self.__check()
-                self.__copied = copy.copy(self.__token_comparsion_operator)
-                if this_char is '<' or this_char is '>' and self.__text[i + 1] != '=':
+                self.__copied = copy.copy(self.__token_comparison_operator)
+                if this_char=='<' or this_char=='>' and self.__text[i + 1]!= '=':
                     self.__copied.set_text(str(this_char))
                 else:
                     self.__copied.set_text(str(this_char + "="))
                     i += 1
                 self.__TOKENS.append(self.__copied)
                 self.__keyword = ""
-            elif self.__token_logical_operator is not None and this_char in self.__LOGICAL_OPERATORS:
-                if (this_char is '&' or this_char is '|') and (
-                        i <= self.__text.__len__() - 2 and self.__text[i + 1] is this_char):
+            elif self.__token_logical_operator!= None and this_char in self.__LOGICAL_OPERATORS:
+                if (this_char=='&' or this_char=='|') and (
+                        i <= self.__text.__len__() - 2 and self.__text[i + 1]==this_char):
                     self.__copied = copy.copy(self.__token_logical_operator)
                     self.__copied.set_text(self.__text[i:i + 2])
                     i += 1
-                elif this_char is '!' and (i is self.__text.__len__() - 1 or (
-                        i <= self.__text.__len__() - 2 and self.__text[i + 1] != '=')):
+                elif this_char=='!' and (i==self.__text.__len__() - 1 or (
+                        i <= self.__text.__len__() - 2 and self.__text[i + 1]!= '=')):
                     self.__copied = copy.copy(self.__token_logical_operator)
                     self.__copied.set_text("!")
                 self.__TOKENS.append(self.__copied)
                 self.__keyword = ""
             elif (
-                    self.__token_binary_operator is not None or self.__token_assigment_operator is not None) and \
-                    this_char in self.__BINARY_OPERATORS or this_char is '=':
+                    self.__token_binary_operator!= None or self.__token_assignment_operator!= None) and \
+                    this_char in self.__BINARY_OPERATORS or this_char=='=':
                 self.__check()
-                is_assigment_operator = False
-                if self.__token_assigment_operator is not None:
+                is_assignment_operator = False
+                if self.__token_assignment_operator!= None:
                     if i <= self.__text.__len__() - 3 and (
-                            self.__text[i:i + 3] is "<<=" or self.__text[i:i + 3] is ">>="):
+                            self.__text[i:i + 3] == "<<=" or self.__text[i:i + 3] == ">>="):
                         self.__copied = copy.copy(
-                            self.__token_assigment_operator)
+                            self.__token_assignment_operator)
                         self.__copied.set_text(self.__text[i:i + 3])
-                        is_assigment_operator = True
+                        is_assignment_operator = True
                         i += 2
                     elif i <= self.__text.__len__() - 2 and this_char in self.__BINARY_OPERATORS and \
-                            self.__text[i + 1] is '=':
+                            self.__text[i + 1]=='=':
                         self.__copied = copy.copy(
-                            self.__token_assigment_operator)
+                            self.__token_assignment_operator)
                         self.__copied.set_text(self.__text[i:i + 2])
-                        is_assigment_operator = True
+                        is_assignment_operator = True
                         i += 1
-                    elif this_char is '=':
+                    elif this_char=='=':
                         self.__copied = copy.copy(
-                            self.__token_assigment_operator)
+                            self.__token_assignment_operator)
                         self.__copied.set_text(str(this_char))
-                        is_assigment_operator = True
-                if not is_assigment_operator and self.__token_binary_operator is not None:
-                    if i <= self.__text.__len__() - 3 and self.__text[i:i + 3] is ">>>":
+                        is_assignment_operator = True
+                if not is_assignment_operator and self.__token_binary_operator!= None:
+                    print (i <= self.__text.__len__() - 2)
+                    if i <= self.__text.__len__() - 3 and self.__text[i:i + 3] == ">>>":
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(self.__text[i:i + 3])
                         i += 2
                     elif i <= self.__text.__len__() - 2 and (
-                            self.__text[i:i + 2] is "<<" or self.__text[i:i + 2] is ">>"):
+                            self.__text[i:i + 2] == "<<" or self.__text[i:i + 2] == ">>"):
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(self.__text[i:i + 2])
-                        i += 1
+                        i += 2
                     elif this_char in self.__BINARY_OPERATORS:
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(str(this_char))
@@ -338,7 +340,7 @@ class LexerBuilder():
 
     def get_next_token(self):
         self.get_all_tokens()
-        if self.__TOKENS is not None and self.__token_counter + 1 < self.__TOKENS.__len__():
+        if self.__TOKENS!= None and self.__token_counter + 1 < self.__TOKENS.__len__():
             self.__token_counter += 1
             return self.__TOKENS[self.__token_counter]
         return None
@@ -349,6 +351,6 @@ class LexerBuilder():
         return None
 
     def has_next_token(self):
-        if self.__token_counter+1 == self.__TOKENS.__len__():
+        if self.__token_counter+1==self.__TOKENS.__len__():
             return False
         return True

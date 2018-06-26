@@ -319,7 +319,6 @@ class LexerBuilder():
                         self.__copied.set_text(str(this_char))
                         is_assignment_operator = True
                 if not is_assignment_operator and self.__token_binary_operator!= None:
-                    print (i <= self.__text.__len__() - 2)
                     if i <= self.__text.__len__() - 3 and self.__text[i:i + 3] == ">>>":
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(self.__text[i:i + 3])

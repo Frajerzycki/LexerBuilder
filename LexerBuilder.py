@@ -327,7 +327,7 @@ class LexerBuilder():
                             self.__text[i:i + 2] == "<<" or self.__text[i:i + 2] == ">>"):
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(self.__text[i:i + 2])
-                        i += 2
+                        i += 1
                     elif this_char in self.__BINARY_OPERATORS:
                         self.__copied = copy.copy(self.__token_binary_operator)
                         self.__copied.set_text(str(this_char))

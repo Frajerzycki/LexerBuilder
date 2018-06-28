@@ -20,7 +20,7 @@ class LexerBuilder():
     __REGEX_INTEGER_LITERAL = re.compile(
         "[+-]?[0-9]+")
 
-    __REGEX_FLOAT_LITERAL = re.compile(r"[+-]?[0-9]*\.[0-9]*")
+    __REGEX_FLOAT_LITERAL = re.compile(r"[+-]?[0-9]+\.[0-9]+")
 
     __BINARY_OPERATORS = ['*', '/', '+',
                           '-', '%', '<', '>', '&', '|', '^', '~']
